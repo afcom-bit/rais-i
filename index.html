@@ -1,149 +1,246 @@
-<!doctype html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#1b4d3e">
-<link rel="manifest" href="manifest.json">
-<title>Radio Islam Sragen</title>
+<!-- ===== RAIS PLAYER: tempel sebelum </body>. Pengaturan ada di blok PENGATURAN. ===== -->
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Segoe UI,Tahoma,sans-serif}body{display:flex;align-items:center;justify-content:center;padding:12px;background:linear-gradient(135deg,#0e0e0e,#1b4d3e)}
+/* ===== PENGATURAN ===== */
+.rais-player{
+  /* Ukuran & crop (px) */
+  --iframe-w:320px; --iframe-h:400px;
+  --crop-x:57px;            /* kiri = kanan */
+  --crop-top:207px; --crop-bottom:14px;
+  --cut-iframe-top:19px;    /* potong atas iframe saja */
+  --cut-mask-top:0px;       /* potong atas topeng */
+  --gap-bottom:16px;        /* jarak ke tepi bawah layar */
+  --shift-x:0px;            /* geser kiri (-) / kanan (+) */
+  --z:99999;
 
-/* --- MODIFIKASI TEMA TERANG: EFEK KACA WINDOWS 7 AERO --- */
-.phone{
-  position:relative;
-  width:min(365px,100%);
-  overflow:hidden;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  border-radius:42px;
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35),
-              inset 0 1px 1px rgba(255, 255, 255, 0.6),
-              inset 0 -1px 3px rgba(0, 0, 0, 0.1);
-}
-.top{position:relative;height:28px;display:flex;align-items:center;justify-content:center}
-.speaker{width:56px;height:7px;border-radius:8px;background:linear-gradient(#4d5856,#252e2c);box-shadow:inset 0 1px 2px rgba(255,255,255,0.4),0 1px 2px rgba(0,0,0,0.3)}
-.camera{position:absolute;top:11px;left:calc(50% + 45px);width:7px;height:7px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7b9691,#394e4a 48%,#192422);box-shadow:0 0 3px rgba(0,0,0,0.2)}
-.dev{position:absolute;top:7px;left:44px;margin:0;color:#223d34;font-size:10px;font-weight:600}
-.screen{position:relative;width:calc(100% - 18px);margin:auto;overflow:hidden;border-radius:20px}
-.logo{position:relative;width:340px;height:300px;margin:auto}.logo>img{width:100%;height:100%;display:block;object-fit:cover;border-radius:18px}
-.stream{position:absolute;bottom:0;left:0;width:100%;height:83px;overflow:hidden;border:1px solid #fff8;border-radius:12px}.stream iframe{position:absolute;top:-135px;left:-50px;width:480px;height:445px;border:0}
-.bottom{height:51px;display:flex;align-items:center;justify-content:center;gap:42px}
-.nav,.home{display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.12s;box-shadow:inset 2px 2px 3px #fff9,inset -2px -2px 3px #0003,0 3px 5px #0006}.nav:active,.home:active{transform:scale(.92)}
-.nav{width:32px;height:32px;border:1px solid rgba(255, 255, 255, 0.5);border-radius:50%;background:linear-gradient(145deg, rgba(255,255,255,0.5), rgba(255,255,255,0.2));color:#1b4d3e}
-.theme:before{content:"☾";font-size:20px}.share svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.3;stroke-linecap:round}
-.home{width:74px;height:34px;border:1px solid rgba(255, 255, 255, 0.5);border-radius:10px;background:linear-gradient(145deg, rgba(255,255,255,0.6), rgba(255,255,255,0.25))}
-.home i{width:13px;height:13px;border:2px solid #1b4d3e;border-radius:3px}
-.overlay{position:fixed;inset:0;z-index:9;display:none;background:#0009}
-.popup{
-  position:fixed;
-  z-index:10;
-  top:50%;
-  left:50%;
-  display:none;
-  width:min(300px,calc(100vw - 32px));
-  padding:20px;
-  color:#1b4d3e;
-  text-align:center;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border:1px solid rgba(255, 255, 255, 0.5);
-  border-radius:22px;
-  transform:translate(-50%,-50%);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-}
-.active{display:block}.title{margin-bottom:15px;font-size:18px;font-weight:700}
-.content{padding:10px;text-align:left;white-space:pre-line;background:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.6);border-radius:10px}
-.btn{width:100%;height:42px;margin-top:8px;border:1px solid rgba(255, 255, 255, 0.6);border-radius:12px;cursor:pointer;color:#1b4d3e;font-weight:600;background:linear-gradient(145deg, rgba(255,255,255,0.7), rgba(255,255,255,0.3))}
+  /* Ukuran besar (skala dari ukuran normal, tertumpu di tepi bawah tengah) */
+  --big-scale:1.2;          /* 1.5 = 150% */
 
-.phone.dark{border-color:#76509a;background:linear-gradient(145deg,#09070f,#251237 55%,#4a2469);box-shadow:0 18px 32px #000b,0 5px 9px #0008,inset 2px 2px 3px #ebdaff4d,inset -3px -3px 5px #0005}.phone.dark .speaker{background:linear-gradient(#9d8baa,#3c284b);box-shadow:0 0 4px #dcb8ff99}.phone.dark .camera{background:radial-gradient(circle at 35% 35%,#ead8ff,#9a72b9 42%,#2a153b 72%);box-shadow:0 0 4px #dcb8ff}.phone.dark .dev{color:#e9d6ff}.phone.dark .nav,.phone.dark .home,.phone.dark~.popup .btn{color:#f4eaff;border-color:#dcb8ff7a;background:linear-gradient(145deg,#5a2e7e,#21102f);box-shadow:inset 2px 2px 3px #fff5,inset -2px -2px 3px #0006,0 3px 5px #000a}.phone.dark .home i{border-color:#ead8ff}.phone.dark .theme:before{content:"☼"}.phone.dark~.popup{color:#f4eaff;border-color:#76509a;background:linear-gradient(145deg,#2e1744,#100817)}.phone.dark~.popup .content{color:#f4eaff;background:#09070fad;border-color:#dcb8ff5c}
+  /* Topeng & lubang */
+  --mask-opacity:1; --r-top:28px; --r-bottom:28px;
+  --hole1-w:196px; --hole1-h:116px; --hole1-y:14px; --hole1-r:14px;
+  --circle-size:34px; --circle-y:137px;
+  --cover-color:#faf6ed; --cover-h:49px;
 
-/* --- SKIN BARU: RADIO PAGER (LCD HIJAU RETRO) --- */
-.phone.pager{
-  border:3px solid #0a0a0a;
-  border-radius:22px;
-  background:linear-gradient(160deg,#4a4a4a,#1c1c1c 60%,#0d0d0d);
-  backdrop-filter:none;-webkit-backdrop-filter:none;
-  box-shadow:0 18px 32px rgba(0,0,0,.6),
-             inset 0 2px 2px rgba(255,255,255,.12),
-             inset 0 -2px 4px rgba(0,0,0,.6);
+  /* Diperkecil */
+  --min-pad-x:9px; --min-pad-y:4px; --min-r:24px; --min-speed:.1s;
+  --min-mask:0;             /* keburaman topeng saat diperkecil: 0 = transparan, 1 = penuh */
+
+  /* Ring & tombol */
+  --ring-gap:3px; --cap-x:48px; --cap-h:27px; --btn-h:23px; --btn-start:20px; --cut-gap:3px; --ico-size:14px;
+
+  /* Tombol info bulat (kanan tombol ukuran, di luar kapsul) */
+  --ib-size:15px; --ib-x:15px; --ib-y:0px;   /* diameter, jarak dari kapsul, geser vertikal (minus = naik) */
+  --ib-lo:#4e0011; --ib-hi:#0066ff; --ib-edge:#ffffff; --ib-ico:#fff8f8;
+
+  /* Teks info (menutup penuh lubang atas) */
+  --info-size:10px; --info-sx:1; --info-y:0px; --info-weight:600; --info-lh:1.35; --info-fade:.6s;
+  --info-title-size:11px; --info-title-weight:700; --info-gap:4px; --info-pad:8px; --info-align:center;
+  --info-time:12;           /* detik tampil; 0 = tetap sampai ditekan lagi */
+
+  /* Teks animasi */
+  --txt-font:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+  --speed:1;                /* pengali semua animasi */
+  --blink-n:1; --line-h:1px;
+  --rais-size:25px; --rais-sx:1; --rais-y:0px; --rais-weight:800; --rais-spacing:.22em; --dot-size:5px;
+  --name-size:15px; --name-sx:1; --name-y:0px; --name-weight:600; --name-spacing:.02em;
+  --sub-size:12px;  --sub-sx:1;  --sub-y:0px;  --sub-weight:600;  --sub-spacing:.02em;
+
+  /* Waktu animasi (detik, sebelum dikali --speed) */
+  --dot-in:.4; --dot-hold:.1; --rais-grow:2.4; --rais-hold:5.5; --rais-blink:3.2; --rais-shrink:2;
+  --type-per:.11; --name-hold:7.5; --sub-hold:3.5; --type-blink:1.2; --type-collapse:1.2; --type-fade:1.6; --type-gap:.5; --loop-pause:1.5;
+
+  /* LED */
+  --led-opacity:.6; --led-glow:4px; --led-h:30px; --led-gap:6px; --led-pad:8px; --led-speed:.9s; --led-segment:5px; --led-lit:4px;
+
+  /* Warna */
+  --mask-color:#002629; --ring-color:94,200,214; --edge:#666;
+  --btn-lo:#1af7ff; --btn-hi:#250101ec; --btn-edge:#585858; --ico-color:#fff;
+  --rais-color:rgb(0,78,10); --name-color:#105f00; --sub-color:#005a00;
+  --info-color:#2b2b2b; --info-title-color:#105f00;
+  --led-color:#86a7a5;
 }
-.phone.pager::before{content:"";position:absolute;top:-16px;left:50%;width:4px;height:18px;background:linear-gradient(#666,#111);transform:translateX(-50%);border-radius:2px;z-index:1}
-.phone.pager::after{content:"";position:absolute;top:-22px;left:50%;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#999,#222);transform:translateX(-50%);box-shadow:0 0 3px #000;z-index:1}
-.phone.pager .speaker{background:#0a0a0a;box-shadow:inset 0 1px 1px #000}
-.phone.pager .camera{background:#1aff5c;box-shadow:0 0 4px #1aff5c,0 0 8px #1aff5c}
-.phone.pager .dev{color:#1aff5c;font-family:"Courier New",monospace;letter-spacing:1px}
-.phone.pager .screen{border:5px solid #0a0a0a;border-radius:8px;background:#001400}
-.phone.pager .screen::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(20,255,80,.08) 0px,rgba(20,255,80,.08) 1px,transparent 1px,transparent 3px);mix-blend-mode:screen;pointer-events:none}
-.phone.pager .logo>img{filter:sepia(1) hue-rotate(65deg) saturate(4.5) contrast(1.15) brightness(.75)}
-.phone.pager .nav,.phone.pager .home{border:2px solid #0a0a0a;border-radius:6px;color:#1aff5c;background:linear-gradient(160deg,#3a3a3a,#161616);box-shadow:inset 1px 1px 1px rgba(255,255,255,.15),inset -1px -1px 2px rgba(0,0,0,.6),0 2px 3px rgba(0,0,0,.5)}
-.phone.pager .home{border-radius:5px}
-.phone.pager .home i{border-color:#1aff5c;border-radius:0}
-.phone.pager .theme:before{content:"📟";font-size:16px}
-.phone.pager~.popup{color:#1aff5c;border-color:#0a0a0a;background:linear-gradient(160deg,#2a2a2a,#0d0d0d);font-family:"Courier New",monospace}
-.phone.pager~.popup .content{color:#1aff5c;background:rgba(0,20,0,.85);border-color:rgba(26,255,92,.4)}
-.phone.pager~.popup .btn{color:#1aff5c;border-color:#0a0a0a;background:linear-gradient(160deg,#3a3a3a,#161616)}
+
+/* ===== INTERNAL ===== */
+.rais-player{--pw:calc(var(--iframe-w) - var(--crop-x)*2);--ph:calc(var(--iframe-h) - var(--crop-top) - var(--crop-bottom));--r:var(--r-top) var(--r-top) var(--r-bottom) var(--r-bottom);--hole1-x:calc((var(--pw) - var(--hole1-w))/2);--circle-x:calc((var(--pw) - var(--circle-size))/2);--ring-d:calc(var(--circle-size) + var(--ring-gap)*2);--cut-r:calc(var(--ring-d)/2 + var(--cut-gap));--row-y:calc(var(--circle-y) + var(--circle-size)/2);--min-top:calc(var(--circle-y) - var(--ring-gap) - var(--min-pad-y));--min-bot:calc(var(--ph) - var(--circle-y) - var(--circle-size) - var(--ring-gap) - var(--min-pad-y));--min-l:calc(var(--cap-x) - var(--min-pad-x));--min-r-in:calc(var(--min-l) - max(0px,var(--ib-x) + var(--ib-size)));
+--ico-led:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 8h3v6H2zM6.5 2h3v12h-3zM11 5.5h3V14h-3z'/%3E%3C/svg%3E");
+--ico-txt:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 2.5h11v2.6h-11zM6.7 2.5h2.6v11H6.7z'/%3E%3C/svg%3E");
+--ico-info:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='3.8' r='1.5'/%3E%3Crect x='6.8' y='6.4' width='2.4' height='7' rx='1.1'/%3E%3C/svg%3E");
+--ico-minus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3' y='7' width='10' height='2' rx='1'/%3E%3C/svg%3E");
+--ico-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M7 3h2v4h4v2H9v4H7V9H3V7h4z'/%3E%3C/svg%3E");
+--ico-square:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='3.6' y='3.6' width='8.8' height='8.8' rx='1.6' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E");
+--ico-mm:var(--ico-plus);
+position:fixed;bottom:var(--gap-bottom);left:50%;margin:0 0 0 calc(var(--shift-x) - var(--pw)/2);width:var(--pw);height:var(--ph);overflow:hidden;line-height:0;clip-path:inset(0 round var(--r));transform:scale(1);transform-origin:50% 100%;transition:clip-path var(--min-speed) ease,transform var(--min-speed) ease;z-index:var(--z);pointer-events:none}
+.rais-player.rais-big{--ico-mm:var(--ico-minus);transform:scale(var(--big-scale))}
+.rais-player.rais-min{--ico-mm:var(--ico-square);clip-path:inset(var(--min-top) var(--min-r-in) var(--min-bot) var(--min-l) round var(--min-r))}
+.rais-player.rais-min .rais-frame{clip-path:circle(calc(var(--circle-size)/2) at calc(var(--pw)/2 + var(--crop-x)) calc(var(--circle-y) + var(--circle-size)/2 + var(--crop-top)))}
+.rais-player.rais-min .rais-mask{opacity:var(--min-mask)}
+.rais-player *,.rais-player *::before,.rais-player *::after{box-sizing:border-box}
+.rais-player .rais-frame{position:absolute!important;left:calc(0px - var(--crop-x))!important;top:calc(0px - var(--crop-top))!important;width:var(--iframe-w)!important;height:var(--iframe-h)!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;border:0!important;display:block!important;pointer-events:auto;clip-path:inset(calc(var(--crop-top) + var(--cut-iframe-top)) 0 0 0)}
+.rais-player .rais-cover{position:absolute;left:var(--hole1-x);width:var(--hole1-w);top:calc(var(--hole1-y) + var(--hole1-h) - var(--cover-h));height:var(--cover-h);background:var(--cover-color);border-radius:0 0 var(--hole1-r) var(--hole1-r);overflow:hidden;z-index:2}
+.rais-player .rais-mask{position:absolute;inset:0;background:var(--mask-color);opacity:var(--mask-opacity);clip-path:inset(var(--cut-mask-top) 0 0 0 round var(--r));mix-blend-mode:multiply;pointer-events:none;transition:opacity var(--min-speed) ease;z-index:3}
+.rais-player .rais-hole{position:absolute;background:#fff}
+.rais-player .rais-hole1{left:var(--hole1-x);top:var(--hole1-y);width:var(--hole1-w);height:var(--hole1-h);border-radius:var(--hole1-r)}
+.rais-player .rais-hole3{left:var(--circle-x);top:var(--circle-y);width:var(--circle-size);height:var(--circle-size);border-radius:50%}
+@supports not (mix-blend-mode:multiply){.rais-player .rais-mask{display:none}}
+
+.rais-player .rais-txt,.rais-player .rais-infobox{position:absolute;inset:0;display:none;font-family:var(--txt-font);pointer-events:none}
+.rais-player.rais-m-txt .rais-txt{display:block;line-height:1.15}
+.rais-player .rais-pos{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.rais-player .rais-wrap{position:relative;display:block;white-space:nowrap}
+.rais-player .rais-pos1{transform:translateY(var(--rais-y)) scaleX(var(--rais-sx))}
+.rais-player .rais-pos2{--tc:var(--name-color);--ts:var(--name-size);--tw:var(--name-weight);--tp:var(--name-spacing);--tx:var(--name-sx);--ty:var(--name-y)}
+.rais-player .rais-pos3{--tc:var(--sub-color);--ts:var(--sub-size);--tw:var(--sub-weight);--tp:var(--sub-spacing);--tx:var(--sub-sx);--ty:var(--sub-y)}
+.rais-player .rais-typed{transform:translateY(var(--ty)) scaleX(var(--tx))}
+.rais-player .rais-t1,.rais-player .rais-tt{display:inline-block;opacity:0}
+.rais-player .rais-t1{color:var(--rais-color);font-size:var(--rais-size);font-weight:var(--rais-weight);letter-spacing:var(--rais-spacing);margin-right:calc(var(--rais-spacing)*-1);will-change:transform,opacity}
+.rais-player .rais-tt{color:var(--tc);font-size:var(--ts);font-weight:var(--tw);letter-spacing:var(--tp);white-space:pre}
+.rais-player .rais-row{display:block;text-align:center;white-space:pre}
+.rais-player .rais-ch{position:relative;visibility:hidden}
+.rais-player .rais-ch.on{visibility:visible}
+.rais-player .rais-ch.cur::after{content:"";position:absolute;right:-1px;top:8%;bottom:8%;width:2px;background:currentColor}
+.rais-player .rais-dot{position:absolute;left:50%;top:50%;width:var(--dot-size);height:var(--dot-size);margin:calc(var(--dot-size)/-2) 0 0 calc(var(--dot-size)/-2);border-radius:50%;background:var(--rais-color);opacity:0;will-change:transform,opacity}
+.rais-player .rais-line{position:absolute;left:0;right:0;top:50%;height:var(--line-h);margin-top:calc(var(--line-h)/-2);background:var(--tc);opacity:0}
+
+.rais-player.rais-info-on .rais-cover{top:var(--hole1-y);height:var(--hole1-h);border-radius:var(--hole1-r)}
+.rais-player.rais-info-on .rais-infobox{display:flex;align-items:center;justify-content:center;padding:0 var(--info-pad);text-align:var(--info-align);background:var(--cover-color)}
+.rais-player .rais-infotxt{display:block;color:var(--info-color);font-size:var(--info-size);font-weight:var(--info-weight);line-height:var(--info-lh);transform:translateY(var(--info-y)) scaleX(var(--info-sx))}
+.rais-player .rais-info-t{display:block;color:var(--info-title-color);font-size:var(--info-title-size);font-weight:var(--info-title-weight);margin-bottom:var(--info-gap)}
+.rais-player .rais-info-t:empty{display:none}
+.rais-player .rais-info-b{display:block;white-space:pre-line}
+.rais-player.rais-info-on .rais-infotxt{animation:rais-fade var(--info-fade) ease-out}
+@keyframes rais-fade{from{opacity:0}to{opacity:1}}
+.rais-player.rais-m-txt .rais-leds,.rais-player.rais-info-on .rais-leds{display:none}
+
+.rais-player .rais-ui{position:absolute;inset:0;pointer-events:none;z-index:3}
+.rais-player .rais-ring{position:absolute;left:calc(var(--circle-x) - var(--ring-gap));top:calc(var(--circle-y) - var(--ring-gap));width:var(--ring-d);height:var(--ring-d);border-radius:50%;border:2px solid rgba(var(--ring-color),.9);box-shadow:0 0 0 1px var(--edge)}
+.rais-player .rais-cap{position:absolute;left:var(--cap-x);right:var(--cap-x);top:calc(var(--row-y) - var(--cap-h)/2);height:var(--cap-h);filter:drop-shadow(1px 0 0 var(--edge)) drop-shadow(-1px 0 0 var(--edge)) drop-shadow(0 1px 0 var(--edge)) drop-shadow(0 -1px 0 var(--edge))}
+.rais-player .rais-cap::before{content:"";position:absolute;inset:0;border:1px solid rgba(var(--ring-color),.9);border-radius:var(--cap-h);-webkit-mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ring-d)/2 - 1px),#000 calc(var(--ring-d)/2 - .4px));mask-image:radial-gradient(circle at 50% 50%,transparent calc(var(--ring-d)/2 - 1px),#000 calc(var(--ring-d)/2 - .4px))}
+.rais-player .rais-side{position:absolute;top:calc(var(--row-y) - var(--btn-h)/2);height:var(--btn-h)}
+.rais-player .rais-side-l{left:calc(var(--cap-x) + 2px);right:calc(50% + var(--btn-start))}
+.rais-player .rais-side-r{right:calc(var(--cap-x) + 2px);left:calc(50% + var(--btn-start))}
+.rais-player .rais-side-i{--btn-lo:var(--ib-lo);--btn-hi:var(--ib-hi);--btn-edge:var(--ib-edge);--ico-color:var(--ib-ico);--ico-size:calc(var(--ib-size)*.625);left:calc(var(--pw) - var(--cap-x) + var(--ib-x));top:calc(var(--row-y) - var(--ib-size)/2 + var(--ib-y));width:var(--ib-size);height:var(--ib-size)}
+.rais-player .rais-btn{--m:radial-gradient(circle at var(--cx) 50%,transparent var(--cut-r),#000 calc(var(--cut-r) + .6px));--m2:radial-gradient(circle at calc(var(--cx) + var(--d)) 50%,transparent calc(var(--cut-r) + 1px),#000 calc(var(--cut-r) + 1.6px));position:absolute;inset:0;margin:0;padding:0;border:0;font-size:0;line-height:0;background:var(--btn-edge);border-radius:var(--rl) var(--rr) var(--rr) var(--rl);-webkit-mask-image:var(--m);mask-image:var(--m);-webkit-appearance:none;appearance:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;pointer-events:auto}
+.rais-player .rais-btn::before{content:"";position:absolute;inset:1px;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 50%),linear-gradient(180deg,var(--btn-lo),var(--btn-hi));border-radius:max(0px,calc(var(--rl) - 1px)) max(0px,calc(var(--rr) - 1px)) max(0px,calc(var(--rr) - 1px)) max(0px,calc(var(--rl) - 1px));-webkit-mask-image:var(--m2);mask-image:var(--m2)}
+.rais-player .rais-btn:hover::before,.rais-player .rais-btn:focus-visible::before{filter:brightness(1.15)}
+.rais-player .rais-btn:active{transform:scale(.97)}
+.rais-player .rais-b-mode{--cx:calc(100% + var(--btn-start));--d:1px;--rl:calc(var(--btn-h)/2);--rr:0px}
+.rais-player .rais-b-min{--cx:calc(var(--btn-start)*-1);--d:-1px;--rl:0px;--rr:calc(var(--btn-h)/2)}
+.rais-player .rais-b-info{--m:none;--m2:none;--rl:50%;--rr:50%}
+.rais-player .rais-ico{position:absolute;left:50%;top:50%;width:var(--ico-size);height:var(--ico-size);margin:calc(var(--ico-size)/-2) 0 0 calc(var(--ico-size)/-2);background:var(--ico-color);-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat;z-index:1;pointer-events:none}
+.rais-player .rais-b-mode .rais-ico{--ico:var(--ico-led)}
+.rais-player.rais-m-txt .rais-b-mode .rais-ico{--ico:var(--ico-txt)}
+.rais-player .rais-b-min .rais-ico{--ico:var(--ico-mm)}
+.rais-player .rais-b-info .rais-ico{--ico:var(--ico-info)}
+
+.rais-player .rais-leds{position:absolute;left:calc(var(--hole1-x) + var(--led-pad));width:calc(var(--hole1-w) - var(--led-pad)*2);top:calc(var(--hole1-y) + var(--hole1-h) - var(--led-pad) - var(--led-h));height:var(--led-h);display:flex;align-items:flex-end;gap:var(--led-gap);opacity:var(--led-opacity);pointer-events:none;z-index:4}
+.rais-player .rais-led{flex:1;min-width:0;height:100%;transform-origin:bottom;background-image:repeating-linear-gradient(to top,var(--led-color) 0,var(--led-color) var(--led-lit),transparent var(--led-lit),transparent var(--led-segment));box-shadow:0 0 var(--led-glow) var(--led-color);animation:rais-led-bounce var(--led-speed) ease-in-out infinite}
+@keyframes rais-led-bounce{0%,100%{transform:scaleY(.2)}25%{transform:scaleY(.9)}50%{transform:scaleY(.4)}75%{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.rais-player{transition:none}.rais-player .rais-led{animation:none;transform:scaleY(.5)}.rais-player.rais-info-on .rais-infotxt{animation:none}}
 </style>
-</head>
-<body>
-<div class="phone" id="phone">
-  <div class="top"><span class="dev">@fcom</span><span class="speaker"></span><span class="camera"></span></div>
-  <div class="screen"><div class="logo">
-    <img src="./icon-192.png" alt="Radio Islam Sragen">
-    <div class="stream"><iframe src="https://streamy1.radioislam.my.id/player/sragen-s-station/" allow="autoplay;encrypted-media" scrolling="no"></iframe></div>
-  </div></div>
-  <div class="bottom">
-    <button class="nav theme" id="theme" aria-label="Tema"></button>
-    <button class="home" id="home" aria-label="Infoemasi"><i></i></button>
-    <button class="nav share" id="share" aria-label="Bagikan"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="19" r="2"/><path d="M8 11l8-5M8 13l8 5"/></svg></button>
+
+<!-- TEKS: ubah data-text1/2/3 (| = baris baru) dan data-info (baris pertama = judul, &#10; = baris baru).
+     data-size = kecil | normal | besar (ukuran awal). data-mode = led | teks. data-led = jumlah bar. -->
+<div class="rais-player rais-m-led" id="rais-player" data-size="normal" data-mode="teks" data-led="10"
+  data-text1="RAIS"
+  data-text2="Radio Islam Sragen"
+  data-text3="Lantunan Muratal|Kajian Islam Ilmiah"
+  data-info="Selamat Datang di Aplikasi Radio Islam Sragen&#10;Media dakwah Islam penyejuk hati di Bumi Sukowati. Menghadirkan lantunan murattal dan kajian sunnah 24 jam nonstop untuk menemani aktivitas Anda">
+  <iframe class="rais-frame" src="https://player.radioislam.or.id/e/radio/RadioIslamSragen?theme=rii&amp;mode=player" scrolling="no" frameborder="0" width="320" height="400" allow="autoplay; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="Radio Islam Sragen"></iframe>
+  <div class="rais-cover">
+    <div class="rais-txt">
+      <div class="rais-pos rais-pos1"><span class="rais-wrap"><i class="rais-dot"></i><span class="rais-t1"></span></span></div>
+      <div class="rais-pos rais-pos2 rais-typed"><span class="rais-wrap"><span class="rais-tt"></span><i class="rais-line"></i></span></div>
+      <div class="rais-pos rais-pos3 rais-typed"><span class="rais-wrap"><span class="rais-tt"></span><i class="rais-line"></i></span></div>
+    </div>
+    <div class="rais-infobox"><span class="rais-infotxt"><b class="rais-info-t"></b><span class="rais-info-b"></span></span></div>
   </div>
-</div>
-
-<div class="overlay" id="overlay"></div>
-
-<div class="popup" id="shareMenu">
-  <div class="title">Bagikan Radio Islam Sragen</div>
-  <button class="btn" id="systemShare">📤 Bagikan Link</button>
-  <button class="btn" id="copyLink">🔗 Salin Link</button>
-  <button class="btn close">✕ Tutup</button>
-</div>
-
-<div class="popup" id="infoMenu">
-  <div class="title">Informasi</div>
-  <div class="content" id="infoContent"></div>
-  <button class="btn close">✕ Tutup</button>
+  <div class="rais-mask"><div class="rais-hole rais-hole1"></div><div class="rais-hole rais-hole3"></div></div>
+  <div class="rais-ui">
+    <span class="rais-cap"></span>
+    <span class="rais-ring"></span>
+    <div class="rais-side rais-side-l"><button type="button" class="rais-btn rais-b-mode"><span class="rais-ico"></span></button></div>
+    <div class="rais-side rais-side-r"><button type="button" class="rais-btn rais-b-min"><span class="rais-ico"></span></button></div>
+    <div class="rais-side rais-side-i"><button type="button" class="rais-btn rais-b-info" aria-label="Informasi" title="Informasi" aria-pressed="false"><span class="rais-ico"></span></button></div>
+  </div>
+  <div class="rais-leds"></div>
 </div>
 
 <script>
-const info=["Radio Islam Sragen","Dengarkan siaran Radio Islam Sragen secara langsung.","Gunakan tombol bagikan untuk mengirimkan link radio kepada keluarga dan sahabat."];
-const $=s=>document.querySelector(s),phone=$("#phone"),overlay=$("#overlay"),shareMenu=$("#shareMenu"),infoMenu=$("#infoMenu");
-function tutup(){overlay.classList.remove("active");shareMenu.classList.remove("active");infoMenu.classList.remove("active")}
+(function(){
+var p=document.getElementById('rais-player');if(!p)return;
+var q=function(s){return p.querySelector(s)},cl=p.classList,
+bm=q('.rais-b-mode'),bn=q('.rais-b-min'),bi=q('.rais-b-info'),t1=q('.rais-t1'),dot=q('.rais-dot'),cs=getComputedStyle(p),
+run=0,tm,sz=1,items=[],SZ=['kecil','normal','besar'],rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function sv(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function ld(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function at(n,d){var v=p.getAttribute(n);return v===null?d:v}
+function lb(b,t){b.setAttribute('aria-label',t);b.title=t}
+function center(){p.style.left=Math.round(document.documentElement.clientWidth/2)+'px'}
+center();addEventListener('resize',center);
 
-/* Tema kini bersiklus: light -> dark -> pager -> light */
-const themes=["light","dark","pager"];
-function applyTheme(t){
-  phone.classList.remove("dark","pager");
-  if(t==="dark")phone.classList.add("dark");
-  if(t==="pager")phone.classList.add("pager");
-  localStorage.setItem("rais-phone-theme",t);
-}
-$("#theme").onclick=()=>{
-  let cur=localStorage.getItem("rais-phone-theme")||"light";
-  let next=themes[(themes.indexOf(cur)+1)%themes.length];
-  applyTheme(next);
-};
+/* Isi */
+t1.textContent=at('data-text1','RAIS');
+var ti=at('data-info',''),k0=ti.indexOf('\n');
+q('.rais-info-t').textContent=k0<0?'':ti.slice(0,k0);q('.rais-info-b').textContent=ti.slice(k0+1);
+for(var i=0,n=parseInt(at('data-led','10'),10)||0;i<n;i++){var l=document.createElement('span');l.className='rais-led';l.style.animationDelay='-'+(i*7%10)*.09+'s';q('.rais-leds').appendChild(l)}
+[['.rais-pos2','data-text2','Radio Islam Sragen','--name-hold'],['.rais-pos3','data-text3','','--sub-hold']].forEach(function(d){
+  var x=at(d[1],d[2]);if(!x)return;
+  var pos=q(d[0]),it={t:pos.querySelector('.rais-tt'),line:pos.querySelector('.rais-line'),hold:d[3],chars:[]};
+  x.split('|').forEach(function(s){var r=document.createElement('span');r.className='rais-row';
+    s.split('').forEach(function(c){var e=document.createElement('span');e.className='rais-ch';e.textContent=c;r.appendChild(e);it.chars.push(e)});
+    it.t.appendChild(r)});
+  items.push(it)});
 
-$("#share").onclick=()=>{overlay.classList.add("active");shareMenu.classList.add("active")};
-$("#home").onclick=()=>{$("#infoContent").textContent=info.join("\n\n");overlay.classList.add("active");infoMenu.classList.add("active")};
-overlay.onclick=tutup;document.querySelectorAll(".close").forEach(x=>x.onclick=tutup);
-$("#systemShare").onclick=async()=>{let d={title:"Radio Islam Sragen",text:"Dengarkan Radio Islam Sragen",url:location.href};try{navigator.share?await navigator.share(d):(await navigator.clipboard.writeText(d.url),alert("Link berhasil disalin."))}catch(e){}};
-$("#copyLink").onclick=async()=>{try{await navigator.clipboard.writeText(location.href);alert("Link berhasil disalin.")}catch(e){prompt("Salin link berikut:",location.href)}};
+/* Animasi teks (waktu dibaca dari CSS, detik / --speed) */
+function sec(n,d){var v=parseFloat(cs.getPropertyValue(n));return(isNaN(v)?d:v)*1000/(parseFloat(cs.getPropertyValue('--speed'))||1)}
+function nb(){var n=parseInt(cs.getPropertyValue('--blink-n'),10);return isNaN(n)?2:n}
+function wait(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function fx(el,kf,ms,o){return el.animate(kf,Object.assign({duration:ms,fill:'forwards',easing:'ease-in-out'},o||{})).finished.catch(function(){})}
+function reset(){var e=[t1,dot];items.forEach(function(it){e.push(it.t,it.line);it.chars.forEach(function(c){c.classList.remove('on','cur')})});e.forEach(function(x){x.getAnimations().forEach(function(a){a.cancel()})})}
 
-applyTheme(localStorage.getItem("rais-phone-theme")||"light");
-if("serviceWorker"in navigator)navigator.serviceWorker.register("./sw.js").catch(()=>{});
+async function typed(it,ok){
+  await fx(it.t,[{opacity:1},{opacity:1}],1);
+  var per=sec('--type-per',.11),last=it.chars.length-1;
+  for(var i=0;i<=last;i++){if(i)it.chars[i-1].classList.remove('cur');it.chars[i].classList.add('on','cur');await wait(per);if(!ok())return false}
+  it.chars[last].classList.remove('cur');
+  await wait(sec(it.hold,3.5));if(!ok())return false;
+  await fx(it.t,[{opacity:1},{opacity:.08},{opacity:1}],sec('--type-blink',1.2),{iterations:nb()});if(!ok())return false;
+  var cut=sec('--type-collapse',1.2);
+  fx(it.line,[{opacity:0},{opacity:1}],cut*.8,{delay:cut*.2});
+  await fx(it.t,[{transform:'scaleY(1)',opacity:1,offset:0},{opacity:1,offset:.6},{transform:'scaleY(.03)',opacity:0,offset:1}],cut);if(!ok())return false;
+  await fx(it.line,[{opacity:1,transform:'scaleX(1)'},{opacity:0,transform:'scaleX(0)'}],sec('--type-fade',1.6),{easing:'ease-in'});
+  return ok()}
+
+async function cycle(my){
+  var ok=function(){return my===run};reset();
+  var dIn=sec('--dot-in',.7);
+  await fx(dot,[{opacity:0,transform:'scale(0)'},{opacity:1,transform:'scale(1)'}],dIn,{easing:'ease-out'});if(!ok())return;
+  await wait(sec('--dot-hold',.4));if(!ok())return;
+  var g=sec('--rais-grow',2.4);
+  fx(dot,[{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(2.2)'}],g*.5);
+  await fx(t1,[{opacity:0,transform:'scale(.06)',offset:0},{opacity:1,offset:.45},{opacity:1,transform:'scale(1)',offset:1}],g,{easing:'cubic-bezier(.25,.8,.3,1)'});if(!ok())return;
+  await wait(sec('--rais-hold',3.5));if(!ok())return;
+  await fx(t1,[{opacity:1},{opacity:.08},{opacity:1}],sec('--rais-blink',1.2),{iterations:nb()});if(!ok())return;
+  var s=sec('--rais-shrink',2);
+  fx(dot,[{opacity:0,transform:'scale(2.2)'},{opacity:1,transform:'scale(1)'}],s*.5,{delay:s*.5});
+  await fx(t1,[{opacity:1,transform:'scale(1)',offset:0},{opacity:1,offset:.55},{opacity:0,transform:'scale(.06)',offset:1}],s);if(!ok())return;
+  await fx(dot,[{opacity:1,transform:'scale(1)'},{opacity:0,transform:'scale(0)'}],dIn);if(!ok())return;
+  for(var k=0;k<items.length;k++){await wait(sec('--type-gap',.5));if(!ok())return;if(!(await typed(items[k],ok)))return}
+  await wait(sec('--loop-pause',1.5))}
+async function loop(my){while(my===run)await cycle(my)}
+
+/* Mode (tombol kiri), info (tombol bulat), ukuran (tombol kanan: kecil > normal > besar) */
+function setMode(m){var t=m==='txt';cl.toggle('rais-m-txt',t);cl.toggle('rais-m-led',!t);lb(bm,t?'Tampilkan LED':'Tampilkan teks RAIS');run++;reset();if(!t)return;if(rm)t1.style.opacity=1;else loop(run)}
+function setInfo(v){clearTimeout(tm);cl.toggle('rais-info-on',v);bi.setAttribute('aria-pressed',v?'true':'false');var s=parseFloat(cs.getPropertyValue('--info-time'));if(v&&s>0)tm=setTimeout(function(){setInfo(false)},s*1000)}
+function setSize(n,now){sz=n;if(now)p.style.transition='none';cl.toggle('rais-min',n===0);cl.toggle('rais-big',n===2);lb(bn,['Ukuran normal','Perbesar player','Perkecil player'][n]);if(n===0)setInfo(false);if(now){void p.offsetWidth;p.style.transition=''}}
+
+var s0=parseInt(ld('rais-size'),10),md=ld('rais-mode'),dm=at('data-mode','teks'),ds=SZ.indexOf(at('data-size','normal'));
+setSize(s0>=0&&s0<=2?s0:ds<0?1:ds,true);
+setMode(md==='led'||md==='txt'?md:dm==='led'?'led':'txt');
+
+bm.addEventListener('click',function(){var n=cl.contains('rais-m-txt')?'led':'txt';setMode(n);sv('rais-mode',n)});
+bn.addEventListener('click',function(){var n=(sz+1)%3;setSize(n);sv('rais-size',n)});
+bi.addEventListener('click',function(){if(sz===0){setSize(1);sv('rais-size',1)}setInfo(!cl.contains('rais-info-on'))});
+})();
 </script>
-</body>
-</html>
+<!-- ===== RAIS PLAYER: selesai ===== -->
