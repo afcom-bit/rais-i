@@ -1,10 +1,41 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Radio Islam Sragen</title>
+<meta name="description" content="Lantunan murattal dan kajian sunnah 24 jam nonstop dari Radio Islam Sragen.">
+<meta name="theme-color" content="#002629">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Radio Sragen">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+html,body{height:100%;margin:0}
+body{background:radial-gradient(120% 80% at 50% 0%,#0d3a3f 0%,#00181a 70%) fixed;color:#cfe9ec;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;text-align:center;padding:calc(env(safe-area-inset-top) + 28px) 16px 0}
+h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.02em}
+p{margin:6px 0 0;font-size:13px;opacity:.75}
+#pasang{margin-top:16px;padding:8px 18px;border:1px solid #5ec8d6;border-radius:999px;background:transparent;color:#cfe9ec;font:inherit;font-size:13px;cursor:pointer}
+#pasang[hidden],#offline[hidden]{display:none}
+#offline{margin-top:12px;font-size:12px;color:#ffb4b4}
+</style>
+</head>
+<body>
+<h1>Radio Islam Sragen</h1>
+<p>Lantunan murattal &amp; kajian sunnah 24 jam nonstop</p>
+<button id="pasang" type="button" hidden>Pasang aplikasi</button>
+<div id="offline" hidden>Sedang offline. Siaran membutuhkan koneksi internet.</div>
+
 <!-- ===== RAIS PLAYER: tempel sebelum </body>. Pengaturan ada di blok PENGATURAN. ===== -->
 <style>
 /* ===== PENGATURAN ===== */
 .rais-player{
   /* Ukuran & crop (px) */
   --iframe-w:320px; --iframe-h:400px;
-  --crop-x:57px;            /* kiri = kanan */
+  --crop-x:61px;            /* kiri = kanan */
   --crop-top:207px; --crop-bottom:14px;
   --cut-iframe-top:19px;    /* potong atas iframe saja */
   --cut-mask-top:0px;       /* potong atas topeng */
@@ -13,11 +44,11 @@
   --z:99999;
 
   /* Ukuran besar (skala dari ukuran normal, tertumpu di tepi bawah tengah) */
-  --big-scale:1.2;          /* 1.5 = 150% */
+  --big-scale:1.5;          /* 1.5 = 150% */
 
   /* Topeng & lubang */
   --mask-opacity:1; --r-top:28px; --r-bottom:28px;
-  --hole1-w:196px; --hole1-h:116px; --hole1-y:14px; --hole1-r:14px;
+  --hole1-w:192px; --hole1-h:116px; --hole1-y:14px; --hole1-r:14px;
   --circle-size:34px; --circle-y:137px;
   --cover-color:#faf6ed; --cover-h:49px;
 
@@ -30,7 +61,7 @@
 
   /* Tombol info bulat (kanan tombol ukuran, di luar kapsul) */
   --ib-size:15px; --ib-x:15px; --ib-y:0px;   /* diameter, jarak dari kapsul, geser vertikal (minus = naik) */
-  --ib-lo:#4e0011; --ib-hi:#0066ff; --ib-edge:#ffffff; --ib-ico:#fff8f8;
+  --ib-lo:#4e0011; --ib-hi:#00eeff; --ib-edge:#585858; --ib-ico:#ccc;
 
   /* Teks info (menutup penuh lubang atas) */
   --info-size:10px; --info-sx:1; --info-y:0px; --info-weight:600; --info-lh:1.35; --info-fade:.6s;
@@ -244,3 +275,17 @@ bi.addEventListener('click',function(){if(sz===0){setSize(1);sv('rais-size',1)}s
 })();
 </script>
 <!-- ===== RAIS PLAYER: selesai ===== -->
+
+<style>.rais-player{--gap-bottom:max(16px,calc(50vh - var(--ph)/2))}</style>
+<script>
+(function(){
+var b=document.getElementById('pasang'),o=document.getElementById('offline'),dp;
+addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;b.hidden=false});
+b.addEventListener('click',function(){if(!dp)return;dp.prompt();dp.userChoice.then(function(){dp=null;b.hidden=true})});
+addEventListener('appinstalled',function(){b.hidden=true});
+function net(){o.hidden=navigator.onLine}net();addEventListener('online',net);addEventListener('offline',net);
+if('serviceWorker' in navigator)addEventListener('load',function(){navigator.serviceWorker.register('sw.js')});
+})();
+</script>
+</body>
+</html>
